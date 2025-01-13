@@ -1,83 +1,67 @@
-import logo from './logo.svg';
 import React, { useState, useEffect } from "react";
-import './App.css';
-import Input from './components/Input.jsx';
-import ListItem from './components/ListItem.jsx';
 import axios from "axios";
+import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
 
+const App = () => {
+  const [tasks, setTasks] = useState([]);
 
-export default function App() {
-  
-  const [taskInput, setTaskInput] = useState("");
-  const [tasks, setTask] = useState([]);
-
-  useEffect(() => {
-     axios.get("http://localhost:8080/getAllTask")
-      .then((response) => {
-       console.log(response.data);
-       setTask(response.data);
-     });
-   }, []);
-
-  const handleTaskInput = (str) => {
-    setTaskInput(str);
-  };
-
-  const addTask = () => {
-    if (taskInput !== "") {
-      const task = {
-        text: taskInput,
-        completed: false
-      };
-      axios.post("http://localhost:8080/createTask", task)
-      .then((res) =>{
-        console.log(res);
-        setTask([...tasks, task]);
-        setTaskInput("");
-      })
-      .catch((err)=>console.log(err));
+  // Fetch all tasks
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/tasks");
+      setTasks(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
     }
   };
 
-  const handleDeleteTask = (index) => {
-    var updatedTask = tasks.filter((_, i) => i !== index);
-    axios.post("http://localhost:8080/updateAllTask", updatedTask)
-    .then((res)=>{
-      console.log(res);
-      setTask(updatedTask);
-    })
-    .catch((err) => console.log(err));
+  // Add a new task
+  const addTask = async (task) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/tasks/create", task);
+      setTasks((prevTasks) => [...prevTasks, response.data]); // Use functional update for state
+      fetchTasks();
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
-  const handleStrikthrough = (index) => {
-    var updatedTask = tasks.map((ele, i) => {
-      if (index === i) {
-        const updatedElement = {
-          ...ele,
-          completed: ele.completed ? false : true,
-        };
-        return updatedElement;
-      } else {
-        return ele;
-      }
-    });
-    setTask(updatedTask);
+  // Update a task
+  const updateTask = async (id, updatedTask) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/tasks/update/${id}`, updatedTask);
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === id ? response.data : task))
+      );
+      fetchTasks();
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
-  
+
+  // Delete a task
+  const deleteTask = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/tasks/delete/${id}`);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
-    <div className="App">
-      <h1>ToDo Web App</h1>
-      <Input
-        taskInput={taskInput}
-        addTask={addTask}
-        handleTaskInput={handleTaskInput}
-      />
-      <ListItem
-        tasks={tasks}
-        handleDeleteTask={handleDeleteTask}
-        handleStrikthrough={handleStrikthrough}
-      />
+    <div className="min-h-screen bg-white text-black p-6">
+      <h1 className="text-4xl font-bold mb-6 text-center">Task Manager</h1>
+      <TaskForm addTask={addTask} />
+      <TaskList tasks={tasks} updateTask={updateTask} deleteTask={deleteTask} />
     </div>
   );
-}
+};
+
+export default App;
 

@@ -12,8 +12,12 @@ const ListItem = (props) => {
             >
               {ele.text}
             </span>
+          <div classNam="btn-container" >
+            <button className="btn">Edit</button>
             <button className="btn" onClick={() => props.handleDeleteTask(i)}>Delete</button>
+          </div>
           </li>
+
         );
       })}
     </ul>
