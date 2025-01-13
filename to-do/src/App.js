@@ -9,7 +9,7 @@ const App = () => {
   // Fetch all tasks
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/tasks");
+      const response = await axios.get("https://to-do-web-application-xfkp.vercel.app/api/tasks");
       setTasks(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -19,7 +19,7 @@ const App = () => {
   // Add a new task
   const addTask = async (task) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/tasks/create", task);
+      const response = await axios.post("https://to-do-web-application-xfkp.vercel.app/api/tasks/create", task);
       setTasks((prevTasks) => [...prevTasks, response.data]); // Use functional update for state
       fetchTasks();
     } catch (error) {
@@ -30,7 +30,7 @@ const App = () => {
   // Update a task
   const updateTask = async (id, updatedTask) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/tasks/update/${id}`, updatedTask);
+      const response = await axios.put(`https://to-do-web-application-xfkp.vercel.app/api/tasks/update/${id}`, updatedTask);
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task._id === id ? response.data : task))
       );
@@ -43,7 +43,7 @@ const App = () => {
   // Delete a task
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/delete/${id}`);
+      await axios.delete(`https://to-do-web-application-xfkp.vercel.app/api/tasks/delete/${id}`);
       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
     } catch (error) {
       console.error("Error deleting task:", error);
