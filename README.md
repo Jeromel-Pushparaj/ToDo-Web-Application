@@ -2,6 +2,8 @@
 
 This repository contains a ToDo web application built using the MERN stack (MongoDB, Express.js, React, Node.js). The application enables users to create, update, delete, and manage their tasks efficiently.
 
+![App workflow](https://github.com/user-attachments/assets/63a9b4ee-bfb3-4177-8253-8275d30e9ca0)
+
 ---
 
 ## Project Structure
